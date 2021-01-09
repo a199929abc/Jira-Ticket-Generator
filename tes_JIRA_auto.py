@@ -62,10 +62,24 @@ def save_textvariable():
     except:
         mb.showerror("Error", "Login Unsuccessfull")
 def openFile():
-    return  0
-def extractRow(): 
-    return 0
+    """ Open File explorer and lets user select exsisting excel workbook and worksheet to be used """
+    global mypath
+    global workbookTitle
+    mypath = filedialog.askopenfilename(initialdir = "C:",
+                           filetypes = (("Excel Workbook", "*.xlsx"), ("Excel Macro-Enabled Workbook","*.xlsm")),
+                           title = "Choose a file."
+                           )
 
+    workbookTitle = os.path.basename(mypath)
+    wbkTitle = StringVar()
+    wbkTitle.set(workbookTitle)
+    
+    Entry(labelframe1, textvariable = wbkTitle, state = DISABLED, width = 35, font = 'bold').place(x = 20, y = 25)
+    print(wbkTitle.get())
+def extractRow(): 
+
+    
+    return 0
 if __name__=='__main__':
     log_inWindow = tk.Tk()
     log_inWindow.title('JIRA Login')
