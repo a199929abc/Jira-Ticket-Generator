@@ -1,8 +1,8 @@
 """
 Author:Kaiheng Zhang
 Mail : kaiheng365@gmail.com
-Date: 2021-01-08
-Version:2.0.2
+Date: 2021-01-13
+Version:VersionControl
 """
 from onc.onc import ONC
 import json
@@ -34,7 +34,6 @@ from jira import JIRA
 import re
 
 #Variables
-
 username = ''
 password = ''
 mypath = ''
@@ -43,7 +42,6 @@ loginWindow = ''
 GUI_flag= False
 versionControl= '2.0.3'
 df_whole= pd.DataFrame()
-
 # create a dataframe for storing the deploy row
 df_out = pd.DataFrame()
 # create a dictionary for storing the site ticket EN number
@@ -82,6 +80,8 @@ def openFile():
     print(wbkTitle.get())
 def create_ticket(row,Instrument_Category,Instrument,Serial_Number):  
     # Assign the values
+    #Ticket create row by row. This part is adding all the require information to the JIRA API
+    #instrument, instrument Category, serial Numbers are get from the ONC API 
     __SerialNumber = Serial_Number
     __Instrument=   Instrument
     __InstrumentCategory = Instrument_Category
@@ -99,6 +99,7 @@ def create_ticket(row,Instrument_Category,Instrument,Serial_Number):
 
     # Connect to jira
     # Authentication done by using username and password
+    #password can be set as user input in the future 
     username = 'mtcelec2'
     password = '1q2w3e4R!'
 
@@ -126,6 +127,7 @@ def create_ticket(row,Instrument_Category,Instrument,Serial_Number):
 
     return new_issue.key    
 def oncAPIget(row):
+    #set variable you want to get from the web service and provide the data you provided from Excel
     Instrument_Category=''
     Instrument=''
     Serial_Number= ''
@@ -141,6 +143,7 @@ def oncAPIget(row):
     if (response.ok):
         devices = json.loads(str(response.content,'utf-8')) # convert the json response to an object
         for device in devices:
+            #if the response success, you will receive the required info here
             Instrument=device.get('deviceName')
             Instrument_Category=device.get('deviceCategoryCode')
             
@@ -153,12 +156,14 @@ def oncAPIget(row):
             print ('Error {} - {}'.format(response.status_code,response.reason))
 
     
-    
+    #Since there isn't exactlly cell for serial number, they are all at the end of the instrument name
+    #we need to process the string to get serial number
     SNtemp = Instrument.split()
     if len(SNtemp)<=1:
         Serial_Number=None
     else:
         Serial_Number=SNtemp[-1]
+    #return data we want to get 
     return Instrument_Category, Instrument, Serial_Number
 def processExcel():
     global mypath
@@ -168,19 +173,26 @@ def processExcel():
     df_whole = pd.read_excel (mypath)
     #print(df_whole.shape)
     #print(len(df_whole.keys()))
+    #drop unused columns of the dataframe
     df_whole.drop(df_whole.iloc[:, 7::], inplace = True, axis = 1)
+    #insert the cloumn to count the number
     df_whole.insert(7, "rowNum",np.nan)
+    #set cloumns name to the dataframe
     df_whole.columns=['Site/Location','DeviceID','Ticket Link','Instrument Category','Instrument','Serial Number','Created Ticket','rowNum']
+    #In JIRA API it requires component to fill in the ticket
     df_whole.insert(8, "Component", "Test and Development")
+    #Linked To and work Ticket to show the relation of the ticket
     df_whole.insert(9, "Linked To", np.nan)
     df_whole.insert(10,"Work Ticket",np.nan)
-    
+    #process each ROW each iteration 
     for index, row in df_whole.iterrows():
         Instrument_Category=''
         Instrument=''
         Serial_Number= ''
+        #using JIRA API get info required
         Instrument_Category, Instrument, Serial_Number= oncAPIget(row)
         #myKey = create_ticket(row,Instrument_Category, Instrument, Serial_Number)
+        #fill back to the original sheet
         df_whole['rowNum'][index]=pos
         df_whole['Instrument Category'][index]=Instrument_Category
         df_whole['Instrument'][index]=Instrument
@@ -188,7 +200,9 @@ def processExcel():
         #df_whole['Created Ticket'][index]=myKey
         #df_whole['Ticket Link'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
         #print("Finished Create Ticket"+'\n')
+        #go to the next row 
         pos+=1
+        #after all the process, we drop the cloumn we don't want
     df_whole.drop(df_whole.iloc[:, 8::], inplace = True, axis = 1)
     try:
         print("Successfully login")
@@ -200,6 +214,9 @@ def processExcel():
 def autoGenerate():
     pos=0
     global df_whole
+    global cb_intvar
+    print(cb_intvar)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
     pd.set_option('mode.chained_assignment', None)
     df_whole.drop(df_whole.iloc[:, 7::], inplace = True, axis = 1)
@@ -277,7 +294,6 @@ if __name__=='__main__':
     create_button.grid(row = 0, column = 1, padx = 15, pady = 10)
     tk.Label(frame, text = "Check the row NOT to create ticket.", font = 'bold').grid(row = 0, column = 3, padx = 10, pady = 10)
     start = 1
-    print("col")
     for col in df_whole.columns: 
         tk.Label(frame, text = col, font = 'bold').grid(row = 1, column = start, padx = 10, pady = 10)
         start += 1
@@ -286,11 +302,11 @@ if __name__=='__main__':
         for i in range(0, total_column):
             dataCell = df_whole.iloc[j,i]
             tk.Label(frame, text = dataCell).grid(row = j+2, column = i+1, padx = 10, pady = 10)
-            '''  cb_intvar=[]
+    cb_intvar=[]
     for j in range(1, total_row+1):  
         cb_intvar.append(IntVar())
         chbx = tk.Checkbutton(frame, variable=cb_intvar[-1])
-        chbx.grid(row = j+1, column = 0, sticky = 'w')'''
+        chbx.grid(row = j+1, column = 0, sticky = 'w')
 
     canvas.create_window(0, 0, anchor = 'nw', window = frame)
     vbar = ttk.Scrollbar(mainWindow, orient = 'vertical', command = canvas.yview)

@@ -170,13 +170,13 @@ if __name__=='__main__':
         Instrument=''
         Serial_Number= ''
         Instrument_Category, Instrument, Serial_Number= oncAPIget(row)
-        myKey = create_ticket(row,Instrument_Category, Instrument, Serial_Number)
+        #myKey = create_ticket(row,Instrument_Category, Instrument, Serial_Number)
         df_whole['rowNum'][index]=pos
         df_whole['Instrument Category'][index]=Instrument_Category
         df_whole['Instrument'][index]=Instrument
         df_whole['Serial Number'][index]=Serial_Number
-        df_whole['Created Ticket'][index]=myKey
-        df_whole['Ticket Link'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
+        #df_whole['Created Ticket'][index]=myKey
+        #df_whole['Ticket Link'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
         print("Finished Create Ticket"+'\n')
         pos+=1
 
