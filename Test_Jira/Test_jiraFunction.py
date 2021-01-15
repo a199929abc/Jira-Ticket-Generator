@@ -133,7 +133,6 @@ def check_status(ticket):
                 )
     new_issue = jira.issue(ticket)
     return new_issue.fields.status.name
-   #
     print(new_issue.fields.status.name) 
     print(new_issue.fields.issuetype.name) 
     print(new_issue.fields.reporter.displayName)
@@ -171,6 +170,7 @@ if __name__=='__main__':
         local_instrument_category=''
         local_instrument=''
         serial_number= ''
+        status=''
         local_instrument,local_instrument_category=onc_request(row)
         local_instrument, serial_number = processString(local_instrument)  
         df_whole['rowNum'][index]=pos
@@ -178,12 +178,13 @@ if __name__=='__main__':
         df_whole['Instrument'][index]=local_instrument
         df_whole['Serial Number'][index]=serial_number
         pos+=1
-
-        ''' myKey = create_ticket(row,local_instrument_category, local_instrument, serial_number)
+        myKey = create_ticket(row,local_instrument_category, local_instrument, serial_number)
         df_whole['Created Ticket'][index]=myKey
+        status=check_status(myKey)
+        df_whole['status']=status
         df_whole['Ticket Link'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
-        print("http://142.104.193.65:8080/browse/%s" % myKey)'''
-        status=check_status('EN-54071')
+        print("http://142.104.193.65:8080/browse/%s" % myKey)
+        
         
    
         #print("Finished Create Ticket"+'\n')
@@ -194,7 +195,7 @@ if __name__=='__main__':
 
 
     #df_whole.drop(df_whole.iloc[:, 8::], inplace = True, axis = 1)
-    #df_whole.to_excel("output_test32.xlsx", sheet_name='S1',index=False) 
+    df_whole.to_excel("output_test_v1.xlsx", sheet_name='S1',index=False) 
     
 
 

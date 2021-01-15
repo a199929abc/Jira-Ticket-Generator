@@ -24,12 +24,12 @@ import jira.client
 from jira.client import JIRA
 from jira import JIRA
 import re
+import datetime
 
 def create_ticket(row,instrument_category,instrument,serial_number):
     # Assign the values
     __SerialNumber = serial_number
     __instrument=   instrument
-    __assi
     __instrumentcategory =instrument_category
     __DeviceID =      row['DeviceID']
   # __SiteLocation = row['Site/Location']
@@ -37,7 +37,14 @@ def create_ticket(row,instrument_category,instrument,serial_number):
     __createdTicket=row['Created Ticket']
     __components=   row['Component'] 
     __outwardIssue = row['Linked To']
-    __issueLink = row['Work Ticket']
+    __assignee= row['Assignee']
+    __assignee =__assignee[0:__assignee.rfind('@')]
+    __duedate = row['Due Date']
+    __description =row['Description']
+    print(__description)
+    
+    
+    #__issueLink = row['Work Ticket']
     ''' if(row['Operation'] == 'Deploy'):
      __summaryTitle = 'instrument Qualification'
     if(row['Operation'] == 'Recover'):
@@ -59,14 +66,14 @@ def create_ticket(row,instrument_category,instrument,serial_number):
         project = {'key': 'EN'}, 
         summary ="'{0}',SI: '{1}',DI: '{2}'".format(__instrument,__SerialNumber, __DeviceID),
         # "%s: %s SI: %s DI: %s" % ( __instrument, __SerialNumber, __DeviceID),
-        description = " instrument category: %s\n " % ( __instrumentcategory), 
+        description = " instrument category: %s\n note: %s\n " % ( __instrumentcategory,__description), 
         issuetype = {'name': 'Task'}, 
         components = [{'name' : __components}],
         customfield_10794 = {'id': "10453"},            # Bill of work to Customers (Default: ONC Internal)
         customfield_10592 = "%s" % __SerialNumber,      # Serial # field
         customfield_10070 = __DeviceID,
-        duedate="2021-01-15",
-        assignee={'name': 	'around'}
+        duedate=str(__duedate),
+        assignee={'name': 	__assignee}
         #assignee format take only name before the email
         #assignee={'sfaassfda'}
         #https://innovalog.atlassian.net/wiki/spaces/JMWEC/pages/108200050/Standard+JIRA+fields Very helpful link 
