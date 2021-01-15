@@ -4,6 +4,8 @@ Mail : kaiheng365@gmail.com
 Date: 2021-01-13
 Version:VersionControl
 """
+from request import *
+#self write function
 from onc.onc import ONC
 import json
 import requests
@@ -126,7 +128,7 @@ def create_ticket(row,Instrument_Category,Instrument,Serial_Number):
         jira.create_issue_link("Related", new_issue.key, __outwardIssue, None)
 
     return new_issue.key    
-def oncAPIget(row):
+
     #set variable you want to get from the web service and provide the data you provided from Excel
     Instrument_Category=''
     Instrument=''
@@ -190,7 +192,10 @@ def processExcel():
         Instrument=''
         Serial_Number= ''
         #using JIRA API get info required
-        Instrument_Category, Instrument, Serial_Number= oncAPIget(row)
+        Instrument_category, Instrument, Serial_Number= request(row) 
+        print('local_instrument_category is '+Instrument)
+        print('Serial N:'+ str(Serial_Number))
+        print('instrment name : '+ Instrument_category)
         #myKey = create_ticket(row,Instrument_Category, Instrument, Serial_Number)
         #fill back to the original sheet
         df_whole['rowNum'][index]=pos
