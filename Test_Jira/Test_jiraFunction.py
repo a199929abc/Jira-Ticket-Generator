@@ -40,7 +40,7 @@ mypath = ''
 workbookTitle = ''
 loginWindow = ''
 GUI_flag= False
-versionControl= '2.0.2'
+versionControl= '2.0.5'
 
 # create a dataframe for storing the deploy row
 df_out = pd.DataFrame()
@@ -64,94 +64,12 @@ def openFile():
     
   #  Entry(labelframe1, textvariable = wbkTitle, state = DISABLED, width = 35, font = 'bold').place(x = 20, y = 25)
     print(wbkTitle.get())
-    
-'''def create_ticket(row,instrument_category,instrument,serial_number):
-    # Assign the values
-    __SerialNumber = serial_number
-    __instrument=   instrument
-    __instrumentcategory =instrument_category
-    __DeviceID =      row['DeviceID']
-  #  __SiteLocation = row['Site/Location']
-    __TicketLink=   row['Ticket Link']
-    __createdTicket=row['Created Ticket']
-    __components=   row['Component'] 
-    __outwardIssue = row['Linked To']
-    __issueLink = row['Work Ticket']
-    if(row['Operation'] == 'Deploy'):
-     __summaryTitle = 'instrument Qualification'
-    if(row['Operation'] == 'Recover'):
-        __summaryTitle = 'instrument Recovery'
-
-    # Connect to jira
-    # Authentication done by using username and password
-    username = 'mtcelec2'
-    password = '1q2w3e4R!'
-
-    jira = JIRA(
-        basic_auth = (username, password),
-        options = {'server': 'http://142.104.193.65:8080'}
-        #options = {'server': 'https://jira.oceannetworks.ca/'}
-    )
-
-    #create a ticket for current row
-    new_issue = jira.create_issue(
-        project = {'key': 'EN'}, 
-        summary ="'{0}',SI: '{1}',DI: '{2}'".format(__instrument,__SerialNumber, __DeviceID),
-        # "%s: %s SI: %s DI: %s" % ( __instrument, __SerialNumber, __DeviceID),
-        description = " instrument category: %s\n " % ( __instrumentcategory), 
-        issuetype = {'name': 'Task'}, 
-        components = [{'name' : __components}],
-        customfield_10794 = {'id': "10453"},            # Bill of work to Customers (Default: ONC Internal)
-        customfield_10592 = "%s" % __SerialNumber,      # Serial # field
-        customfield_10070 = __DeviceID,
-        duedate="2021-01-15",
-        assignee={'name': 	'around'}
-        #assignee format take only name before the email
-        #assignee={'sfaassfda'}
-        #https://innovalog.atlassian.net/wiki/spaces/JMWEC/pages/108200050/Standard+JIRA+fields Very helpful link 
-        )
-    #print(new_issue.fields.status.name) 
-    ##print(new_issue.fields.issuetype.name) 
-    #print(new_issue.fields.reporter.displayName)
-    #print(new_issue.fields.summary)
-    #print(new_issue.fields.comment.comments)    
-                     # Device ID field
-
-    # add the linkedto
-    if(isinstance(row['Linked To'], str)):
-        jira.create_issue_link("Related", new_issue.key, __outwardIssue, None) 
-    print(new_issue.key)
-
-    return new_issue.key   
-def check_status(ticket):
-    username = 'mtcelec2'
-    password = '1q2w3e4R!'
-    jira = JIRA(
-    basic_auth = (username, password),
-    options = {'server': 'http://142.104.193.65:8080'}
-    #options = {'server': 'https://jira.oceannetworks.ca/'}
-                )
-    new_issue = jira.issue(ticket)
-    return new_issue.fields.status.name
-    print(new_issue.fields.status.name) 
-    print(new_issue.fields.issuetype.name) 
-    print(new_issue.fields.reporter.displayName)
-    print(new_issue.fields.summary)
-    print(new_issue.fields.duedate) '''
 
 if __name__=='__main__':
     pos = 0
     index=0
 
-    currSite_Location= ''
-    currDeviceID = ''
-    currTicketLink= ''
-    currinstrumentcategory=''
-    currinstrument=''
-    currSerialNumber=''
-    currCreatedTicket=''
     df_whole = pd.read_excel (r'C:\Users\mtcelec2\Desktop\kaiheng\JIRA_Auto\Test_Jira\jira_input_v2.1.0.xlsx')
-    
     #print(len(df_whole.keys()))
     df_whole.drop(df_whole.iloc[:, 10::], inplace = True, axis = 1)
     df_whole.insert(10, "rowNum",np.nan)
@@ -179,13 +97,13 @@ if __name__=='__main__':
         df_whole['Serial Number'][index]=serial_number
         pos+=1
         myKey = create_ticket(row,local_instrument_category, local_instrument, serial_number)
-        df_whole['Created Ticket'][index]=myKey
+        #df_whole['Created Ticket'][index]=myKey
         status=check_status(myKey)
         df_whole['status']=status
-        df_whole['Ticket Link'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
+        df_whole['Created Ticket'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
         print("http://142.104.193.65:8080/browse/%s" % myKey)
         
-        
+        break
    
         #print("Finished Create Ticket"+'\n')
         
@@ -194,8 +112,8 @@ if __name__=='__main__':
         
 
 
-    #df_whole.drop(df_whole.iloc[:, 8::], inplace = True, axis = 1)
-    df_whole.to_excel("output_test_v1.xlsx", sheet_name='S1',index=False) 
+    #df_whole.drop(df_whole.iloc[:, 10::], inplace = True, axis = 1)
+    #df_whole.to_excel("output_test_v2.xlsx", sheet_name='S1',index=False) 
     
 
 
