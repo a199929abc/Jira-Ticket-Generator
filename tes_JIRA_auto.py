@@ -34,6 +34,7 @@ from jira import JIRA
 import re
 import sys
 import globalvar as gl
+import ctypes
 
 #Variables
 username = ''
@@ -42,7 +43,7 @@ mypath = ''
 workbookTitle = ''
 loginWindow = ''
 GUI_flag= False
-versionControl= '2.0.4'
+versionControl= '2.1.0'
 df_whole= pd.DataFrame()
 # create a dataframe for storing the deploy row
 df_out = pd.DataFrame()
@@ -109,7 +110,6 @@ def processExcel():
         df_whole['Serial Number'][index]=serial_number
         pos+=1
     try:
-        print("Successfully login")
         initWindow.destroy()
     except:
         # no records need to generate tickets
@@ -122,7 +122,6 @@ def autoGenerate():
         if int_var.get():
             drop_row.append(ctr)
     df_out=df_whole.copy()
-    print(df_out)
     df_out= df_out.drop(index=drop_row)
                 
     for index, row in df_out.iterrows():
@@ -144,7 +143,15 @@ def autoGenerate():
         df_out['Created Ticket'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
         print("http://142.104.193.65:8080/browse/%s" % myKey)
     df_out.drop(df_whole.iloc[:, 10::], inplace = True, axis = 1)
-    df_out.to_excel("output_file.xlsx", sheet_name='S1',index=False) 
+    head,sep,tail=workbookTitle.partition('.')
+    df_out.to_excel("%s_output.xlsx"% head, sheet_name='S1',index=False)
+    try:
+        import ctypes  # An included library with Python install.   
+        ctypes.windll.user32.MessageBoxW(0, "Ticket successful created", "Ticket Generator", 0)
+        mainWindow.destroy() 
+    except:
+        mb.showerror("Error", "Nothing to generate.")
+    
 def on_resize(event):
 
     """Resize canvas scrollregion when the canvas is resized."""
