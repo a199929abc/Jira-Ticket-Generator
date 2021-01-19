@@ -5,17 +5,14 @@ Date: 2021-01-13
 Version:VersionControl
 """
 
-from request_jira import *
-import os
+
 from openpyxl import Workbook
 from openpyxl import load_workbook
 import time
 import openpyxl
 import pandas as pd
 import numpy as np
-from onc.onc import ONC
-import json
-import requests
+
 # GUI libraries
 from tkinter import *
 from tkinter import ttk
@@ -25,16 +22,23 @@ import tkinter.scrolledtext as tkst
 from tkinter import messagebox as mb
 from tkinter import filedialog
 import tkinter.font as tkFont
-from request import *
+
 # JIRA libraries
 from jira.resources import IssueLink
 import jira.client
 from jira.client import JIRA
 from jira import JIRA
+# developer libraries
 import re
 import sys
 import globalvar as gl
 import ctypes
+from request import *
+from request_jira import *
+import os
+from onc.onc import ONC
+import json
+import requests
 
 #Variables
 username = ''
@@ -90,26 +94,35 @@ def processExcel():
     index=0
     global df_whole
     df_whole = pd.read_excel(mypath)
+    #drop unused cloumns start from 10
     df_whole.drop(df_whole.iloc[:, 10::], inplace = True, axis = 1)
+    #add rowNum to keep count
     df_whole.insert(10, "rowNum",np.nan)
+    #set  cloumns name to the dataframe
     df_whole.columns=['DeviceID','Due Date','Assignee','Description','Ticket Link','Instrument Category',
     'Instrument','Serial Number','Created Ticket','status','rowNum']
+    #insert necessary cloumn jira API needs
     df_whole.insert(11, "Component", "Test and Development")
     df_whole.insert(12, "Linked To", np.nan)
     df_whole.insert(13,"Work Ticket",np.nan)
     df_whole = df_whole[:-1]
+    #process dataframe row by row 
     for index, row in df_whole.iterrows():
         local_instrument_category=''
         local_instrument=''
         serial_number= ''
+        # sending request through onc API to get instrument name , category
         local_instrument,local_instrument_category=onc_request(row)
+        #process instrument name to get the serial number, using RE to match string, might be more courner case 
         local_instrument, serial_number = processString(local_instrument)  
+        #insert all the info we need to the df, then process done 
         df_whole['rowNum'][index]=pos
         df_whole['Instrument Category'][index]=local_instrument_category
         df_whole['Instrument'][index]=local_instrument
         df_whole['Serial Number'][index]=serial_number
         pos+=1
     try:
+        # enter success destory window
         initWindow.destroy()
     except:
         # no records need to generate tickets
@@ -118,17 +131,20 @@ def processExcel():
 def autoGenerate():
     pos=0
     drop_row = []
+    #get all the variable from Checkboxbutton,we store those marked rows and drop them
+    #we save all the row we want to generate ticket with in df_out 
     for ctr, int_var in enumerate(cb_intvar):
         if int_var.get():
             drop_row.append(ctr)
     df_out=df_whole.copy()
     df_out= df_out.drop(index=drop_row)
-                
+    #we process the output dataframe row by row
     for index, row in df_out.iterrows():
         local_instrument_category=''
         local_instrument=''
         serial_number= ''
         status=''
+        #get what we need using onc API and put them in the right space
         local_instrument,local_instrument_category=onc_request(row)
         local_instrument, serial_number = processString(local_instrument)  
         df_out['rowNum'][index]=pos
@@ -136,17 +152,23 @@ def autoGenerate():
         df_out['Instrument'][index]=local_instrument
         df_out['Serial Number'][index]=serial_number
         pos+=1
+        #調用 jira API the generate the ticket with df_out
         myKey = create_ticket(row,local_instrument_category, local_instrument, serial_number)
-        df_out['Created Ticket'][index]=myKey
+        # 調用 jira API to check the status current ticket
         status=check_status(myKey)
+        #put the status in the right cloumn
         df_out['status'][index]=status
+        #insert the ticket link to the link cloumn 
         df_out['Created Ticket'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
         print("http://142.104.193.65:8080/browse/%s" % myKey)
+    #we drop unnecessary cloumns 
     df_out.drop(df_whole.iloc[:, 10::], inplace = True, axis = 1)
+    #custom title with inputfile_output.xlsx format
     head,sep,tail=workbookTitle.partition('.')
     df_out.to_excel("%s_output.xlsx"% head, sheet_name='S1',index=False)
     try:
-        import ctypes  # An included library with Python install.   
+          # An included library with Python install.   
+          #provide a checkbox if the process had finished
         ctypes.windll.user32.MessageBoxW(0, "Ticket successful created", "Ticket Generator", 0)
         mainWindow.destroy() 
     except:
@@ -156,6 +178,8 @@ def on_resize(event):
 
     """Resize canvas scrollregion when the canvas is resized."""
     canvas.configure(scrollregion=canvas.bbox('all'))   
+#this method is another function of the program. It is an auto checking status mechine, user should provide output
+#file of the program, it will auto check status with each EN-ticket and re write to the original sheet
 def update_status():
     global mypath
     df_check=pd.DataFrame()
@@ -170,6 +194,7 @@ def update_status():
         df_check['status'][index]=status
     df_check.to_excel(mypath, index = False)
     return 0
+# main function
 if __name__=='__main__':
     log_inWindow = tk.Tk()
     log_inWindow.title('JIRA Login')
@@ -186,7 +211,7 @@ if __name__=='__main__':
     e2.grid(row = 1, column = 1)
     tk.Button(log_inWindow, text = 'Login', font = "bold", command = save_textvariable, bd = 4, width = 8, bg = "#0E69C1", fg = "white", activeforeground = "gray").grid(row = 2, column = 2, padx = 10,)
     log_inWindow.mainloop()
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~###
+    # InitWindow
     initWindow = tk.Tk()
     initWindow.title('Open Excel File')
     initWindow.geometry("500x300")
@@ -200,7 +225,7 @@ if __name__=='__main__':
     tk.Button(labelframe1, text = "Update", command =update_status, font = 'bold', bd = 4, width = 10, bg = "white", fg = "black", activeforeground = "gray").place(x = 350, y = 175)
     tk.Label(labelframe1,text=" Version "+versionControl,font="Helvetica 10 italic",bg="#0E69C1",fg="white").place(x=10,y=230)
     initWindow.mainloop()
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #MainWinow to view the output sheet
     mainWindow = tk.Tk()
     mainWindow.title("Import Row")
     mainWindow.state('zoomed')
@@ -214,19 +239,20 @@ if __name__=='__main__':
     total_column = df_whole.shape[1]
     total_row = df_whole.shape[0]
     
-#update_button = tk.Button(frame, text = "UPDATE", command = mytest, bd = 4, relief = RAISED, width = 15, height = 2)
     create_button = tk.Button(frame, text = "CREATE",  command =autoGenerate, bd = 4, relief = RAISED, width = 15, height = 2)
     create_button.grid(row = 0, column = 1, padx = 15, pady = 10)
     tk.Label(frame, text = "Check the row NOT to create ticket.", font = 'bold').grid(row = 0, column = 3, padx = 10, pady = 10)
     start = 1
+    #print out col on the canvas
     for col in df_whole.columns: 
         tk.Label(frame, text = col, font = 'bold').grid(row = 1, column = start, padx = 10, pady = 10)
         start += 1
-
+    #print out row on the canvas
     for j in range(0, total_row):  
         for i in range(0, total_column):
             dataCell = df_whole.iloc[j,i]
             tk.Label(frame, text = dataCell).grid(row = j+2, column = i+1, padx = 10, pady = 10)
+    #checkbox function 
     cb_intvar=[]
     for j in range(1, total_row+1):  
         cb_intvar.append(IntVar())
