@@ -25,6 +25,8 @@ from jira.client import JIRA
 from jira import JIRA
 import re
 import datetime
+from tes_JIRA_auto import username,password
+
 
 def create_ticket(row,instrument_category,instrument,serial_number):
     # Assign the values
@@ -41,6 +43,7 @@ def create_ticket(row,instrument_category,instrument,serial_number):
     __description =row['Description']
     __title='Instrument Qualification '
     print(__description)
+    print(username)
     
     
     #__issueLink = row['Work Ticket']
@@ -51,8 +54,8 @@ def create_ticket(row,instrument_category,instrument,serial_number):
 
     # Connect to jira
     # Authentication done by using username and password
-    username = 'mtcelec2'
-    password = '1q2w3e4R!'
+    #username = 'mtcelec2'
+    #password = '1q2w3e4R!'
 
     jira = JIRA(
         basic_auth = (username, password),

@@ -4,6 +4,7 @@ Mail : kaiheng365@gmail.com
 Date: 2021-01-13
 Version:VersionControl
 """
+
 from request_jira import *
 import os
 from openpyxl import Workbook
@@ -39,19 +40,20 @@ mypath = ''
 workbookTitle = ''
 loginWindow = ''
 GUI_flag= False
-versionControl= '2.0.3'
+versionControl= '2.0.4'
 df_whole= pd.DataFrame()
 # create a dataframe for storing the deploy row
 df_out = pd.DataFrame()
 # create a dictionary for storing the site ticket EN number
 site_dict = {}
 
+    
 def save_textvariable():
     global username
-    username = e1.get()
     global password
+    username = e1.get()
     password = e2.get()
-    global GUI_flag
+
     try:
         jira = JIRA( 
             basic_auth = (username, password),
@@ -77,7 +79,6 @@ def openFile():
     wbkTitle.set(workbookTitle)
     Entry(labelframe1, textvariable = wbkTitle, state = DISABLED, width = 35, font = 'bold').place(x = 20, y = 25)
     print(wbkTitle.get())
-
 def processExcel():
     global mypath
     pos = 0
@@ -111,10 +112,54 @@ def processExcel():
         mb.showerror("Error", "Nothing to generate.")
         return 0
 def autoGenerate():
-    return 0
+    pos=0
+    drop_row = []
+    for ctr, int_var in enumerate(cb_intvar):
+        if int_var.get():
+            drop_row.append(ctr)
+    df_out=df_whole.copy()
+    print(df_out)
+    df_out= df_out.drop(index=drop_row)
+                
+    for index, row in df_out.iterrows():
+        local_instrument_category=''
+        local_instrument=''
+        serial_number= ''
+        status=''
+        local_instrument,local_instrument_category=onc_request(row)
+        local_instrument, serial_number = processString(local_instrument)  
+        df_out['rowNum'][index]=pos
+        df_out['Instrument Category'][index]=local_instrument_category
+        df_out['Instrument'][index]=local_instrument
+        df_out['Serial Number'][index]=serial_number
+        pos+=1
+        myKey = create_ticket(row,local_instrument_category, local_instrument, serial_number)
+        df_out['Created Ticket'][index]=myKey
+        print(type(myKey))
+        status=check_status(myKey)
+        df_out['status'][index]=status
+        df_out['Created Ticket'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
+        print("http://142.104.193.65:8080/browse/%s" % myKey)
+    df_out.drop(df_whole.iloc[:, 10::], inplace = True, axis = 1)
+    df_out.to_excel("output_file11.xlsx", sheet_name='S1',index=False) 
 def on_resize(event):
+
     """Resize canvas scrollregion when the canvas is resized."""
     canvas.configure(scrollregion=canvas.bbox('all'))   
+def update_status():
+    global mypath
+    df_check=pd.DataFrame()
+    df_check = pd.read_excel(mypath)
+    print(df_check)
+    for index, row in df_check.iterrows():
+        status=''
+        link=''
+        link=str(row['Created Ticket'])
+        myKey =link.split('/')[-1]
+        status=check_status(myKey)
+        df_check['status'][index]=status
+    df_check.to_excel(mypath, index = False)
+    return 0
 if __name__=='__main__':
     log_inWindow = tk.Tk()
     log_inWindow.title('JIRA Login')
@@ -139,8 +184,10 @@ if __name__=='__main__':
     initWindow['bg'] = "#0E69C1"
     labelframe1 = LabelFrame(initWindow, text="Choose Excel Workbook", bg = "#0E69C1", fg = "white")
     labelframe1.pack(fill= "both", expand="yes", padx = 10, pady = 10) 
-    tk.Button(labelframe1, text = "BROWSE", command = openFile, font = 'bold', bd = 4, width = 10, bg = "white", fg = "black", activeforeground = "gray").place(x = 350, y = 25)
-    tk.Button(labelframe1, text = "ENTER", command = processExcel, font = 'bold', bd = 4, width = 10, bg = "white", fg = "black", activeforeground = "gray").place(x = 350, y = 100)
+    #transfer_variable
+    tk.Button(labelframe1, text = "Brose", command = openFile, font = 'bold', bd = 4, width = 10, bg = "white", fg = "black", activeforeground = "gray").place(x = 350, y = 25)
+    tk.Button(labelframe1, text = "Enter", command = processExcel, font = 'bold', bd = 4, width = 10, bg = "white", fg = "black", activeforeground = "gray").place(x = 350, y = 100)
+    tk.Button(labelframe1, text = "Update", command =update_status, font = 'bold', bd = 4, width = 10, bg = "white", fg = "black", activeforeground = "gray").place(x = 350, y = 175)
     tk.Label(labelframe1,text=" Version "+versionControl,font="Helvetica 10 italic",bg="#0E69C1",fg="white").place(x=10,y=230)
     initWindow.mainloop()
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

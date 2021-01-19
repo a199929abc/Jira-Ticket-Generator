@@ -8,15 +8,7 @@ import numpy as np
 from onc.onc import ONC
 import json
 import requests
-# GUI libraries
-from tkinter import *
-from tkinter import ttk
-import tkinter as tk
-from tkinter.filedialog import askopenfilename
-import tkinter.scrolledtext as tkst
-from tkinter import messagebox as mb
-from tkinter import filedialog
-import tkinter.font as tkFont
+
 from request import *
 # JIRA libraries
 from jira.resources import IssueLink
@@ -25,6 +17,7 @@ from jira.client import JIRA
 from jira import JIRA
 import re
 import datetime
+
 
 def create_ticket(row,instrument_category,instrument,serial_number):
     # Assign the values
@@ -40,20 +33,13 @@ def create_ticket(row,instrument_category,instrument,serial_number):
     __duedate = row['Due Date']
     __description =row['Description']
     __title='Instrument Qualification '
-    print(__description)
-    
-    
-    #__issueLink = row['Work Ticket']
-    ''' if(row['Operation'] == 'Deploy'):
-     __summaryTitle = 'instrument Qualification'
-    if(row['Operation'] == 'Recover'):
-        __summaryTitle = 'instrument Recovery'''
 
     # Connect to jira
     # Authentication done by using username and password
-    username = 'mtcelec2'
-    password = '1q2w3e4R!'
-
+    #username = 'mtcelec2'
+    #password = '1q2w3e4R!'
+    #global username,password
+    #username,password=transfer_variable()
     jira = JIRA(
         basic_auth = (username, password),
         options = {'server': 'http://142.104.193.65:8080'}
@@ -92,8 +78,11 @@ def create_ticket(row,instrument_category,instrument,serial_number):
     return new_issue.key
 
 def check_status(ticket):
-    username = 'mtcelec2'
-    password = '1q2w3e4R!'
+
+    #username = 'mtcelec2'
+    #password = '1q2w3e4R!'
+    #global username,password
+    #username,password=transfer_variable()
     jira = JIRA(
     basic_auth = (username, password),
     options = {'server': 'http://142.104.193.65:8080'}

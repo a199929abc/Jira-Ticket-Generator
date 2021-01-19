@@ -97,23 +97,18 @@ if __name__=='__main__':
         df_whole['Serial Number'][index]=serial_number
         pos+=1
         myKey = create_ticket(row,local_instrument_category, local_instrument, serial_number)
-        #df_whole['Created Ticket'][index]=myKey
+        df_whole['Created Ticket'][index]=myKey
         status=check_status(myKey)
         df_whole['status']=status
         df_whole['Created Ticket'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
         print("http://142.104.193.65:8080/browse/%s" % myKey)
         
-        break
+
    
         #print("Finished Create Ticket"+'\n')
-        
-        
 
-        
-
-
-    #df_whole.drop(df_whole.iloc[:, 10::], inplace = True, axis = 1)
-    #df_whole.to_excel("output_test_v2.xlsx", sheet_name='S1',index=False) 
+    df_whole.drop(df_whole.iloc[:, 10::], inplace = True, axis = 1)
+    df_whole.to_excel("output_file.xlsx", sheet_name='S1',index=False) 
     
 
 
