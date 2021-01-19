@@ -32,6 +32,8 @@ import jira.client
 from jira.client import JIRA
 from jira import JIRA
 import re
+import sys
+import globalvar as gl
 
 #Variables
 username = ''
@@ -53,7 +55,9 @@ def save_textvariable():
     global password
     username = e1.get()
     password = e2.get()
-
+    gl._init()
+    gl.set_value('username',username)
+    gl.set_value('password',password)
     try:
         jira = JIRA( 
             basic_auth = (username, password),
@@ -135,13 +139,12 @@ def autoGenerate():
         pos+=1
         myKey = create_ticket(row,local_instrument_category, local_instrument, serial_number)
         df_out['Created Ticket'][index]=myKey
-        print(type(myKey))
         status=check_status(myKey)
         df_out['status'][index]=status
         df_out['Created Ticket'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
         print("http://142.104.193.65:8080/browse/%s" % myKey)
     df_out.drop(df_whole.iloc[:, 10::], inplace = True, axis = 1)
-    df_out.to_excel("output_file11.xlsx", sheet_name='S1',index=False) 
+    df_out.to_excel("output_file.xlsx", sheet_name='S1',index=False) 
 def on_resize(event):
 
     """Resize canvas scrollregion when the canvas is resized."""

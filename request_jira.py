@@ -17,6 +17,7 @@ from jira.client import JIRA
 from jira import JIRA
 import re
 import datetime
+import globalvar as gl
 
 
 def create_ticket(row,instrument_category,instrument,serial_number):
@@ -40,6 +41,8 @@ def create_ticket(row,instrument_category,instrument,serial_number):
     #password = '1q2w3e4R!'
     #global username,password
     #username,password=transfer_variable()
+    username =gl.get_value('username')
+    password=gl.get_value('password')
     jira = JIRA(
         basic_auth = (username, password),
         options = {'server': 'http://142.104.193.65:8080'}
@@ -83,7 +86,9 @@ def check_status(ticket):
     #password = '1q2w3e4R!'
     #global username,password
     #username,password=transfer_variable()
-    jira = JIRA(
+    username =gl.get_value('username')
+    password=gl.get_value('password')
+    jira = JIRA(    
     basic_auth = (username, password),
     options = {'server': 'http://142.104.193.65:8080'}
     #options = {'server': 'https://jira.oceannetworks.ca/'}
