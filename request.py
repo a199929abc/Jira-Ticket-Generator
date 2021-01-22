@@ -1,4 +1,4 @@
-from onc.onc import ONC
+#from onc.onc import ONC
 import json
 import requests
 import re

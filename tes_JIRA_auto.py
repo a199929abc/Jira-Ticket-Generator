@@ -5,7 +5,9 @@ Date: 2021-01-13
 Version:VersionControl
 """
 
+ 
 
+import time
 from openpyxl import Workbook
 from openpyxl import load_workbook
 import time
@@ -15,6 +17,8 @@ import numpy as np
 
 # GUI libraries
 from tkinter import *
+import tkinter.ttk as ttk
+import tkinter as Tkinter 
 from tkinter import ttk
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
@@ -36,7 +40,7 @@ import ctypes
 from request import *
 from request_jira import *
 import os
-from onc.onc import ONC
+#from onc.onc import ONC
 import json
 import requests
 
@@ -74,6 +78,7 @@ def save_textvariable():
         log_inWindow.destroy()
     except:
         mb.showerror("Error", "Login Unsuccessfull")
+        
 def openFile():
     """ Open File explorer and lets user select exsisting excel workbook and worksheet to be used """
     global mypath
@@ -128,6 +133,8 @@ def processExcel():
         # no records need to generate tickets
         mb.showerror("Error", "Nothing to generate.")
         return 0
+
+
 def autoGenerate():
     pos=0
     drop_row = []
@@ -138,6 +145,7 @@ def autoGenerate():
             drop_row.append(ctr)
     df_out=df_whole.copy()
     df_out= df_out.drop(index=drop_row)
+    #thread.start_new_thread( progress(df_out.shape[0]))
     #we process the output dataframe row by row
     for index, row in df_out.iterrows():
         local_instrument_category=''
@@ -161,11 +169,15 @@ def autoGenerate():
         #insert the ticket link to the link cloumn 
         df_out['Created Ticket'][index] = "http://142.104.193.65:8080/browse/%s" % myKey
         print("http://142.104.193.65:8080/browse/%s" % myKey)
+        print("########################################################################################################################")
+
     #we drop unnecessary cloumns 
+
     df_out.drop(df_whole.iloc[:, 10::], inplace = True, axis = 1)
     #custom title with inputfile_output.xlsx format
     head,sep,tail=workbookTitle.partition('.')
     df_out.to_excel("%s_output.xlsx"% head, sheet_name='S1',index=False)
+
     try:
           # An included library with Python install.   
           #provide a checkbox if the process had finished
@@ -193,7 +205,14 @@ def update_status():
         status=check_status(myKey)
         df_check['status'][index]=status
     df_check.to_excel(mypath, index = False)
-    return 0
+    try:
+        ctypes.windll.user32.MessageBoxW(0, "Status updated", "Ticket Generator", 0)
+        
+
+    except:
+        ctypes.windll.user32.MessageBoxW(0, "Something wrong here, please retry", "Ticket Generator", 0)
+
+
 # main function
 if __name__=='__main__':
     log_inWindow = tk.Tk()
