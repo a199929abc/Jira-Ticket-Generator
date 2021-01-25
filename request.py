@@ -70,7 +70,10 @@ def processString(local_instrumentName):
         local_instrument=head
         local_instrument = local_instrument.replace('(', '').replace(')', '')
         Serial_Number=tail.replace('(', '').replace(')', '')
-    else: 
+    elif SNtemp[-1].isalpha(): 
+        Serial_Number=None
+        local_instrument=local_instrumentName
+    else:
         st1=' '
         Serial_Number=SNtemp[-1]
         Serial_Number=Serial_Number.replace('(', '').replace(')', '')

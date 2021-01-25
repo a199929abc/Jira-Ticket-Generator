@@ -128,6 +128,7 @@ def processExcel():
         df_whole['Instrument'][index]=local_instrument
         df_whole['Serial Number'][index]=serial_number
         pos+=1
+      
     try:
         # enter success destory window
         initWindow.destroy()
