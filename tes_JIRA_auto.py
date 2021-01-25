@@ -51,7 +51,7 @@ mypath = ''
 workbookTitle = ''
 loginWindow = ''
 GUI_flag= False
-versionControl= '2.1.0 -Fix Duedate and Assignee cannot be null'
+versionControl= '2.1.1 -All function well and compile script added'
 df_whole= pd.DataFrame()
 # create a dataframe for storing the deploy row
 df_out = pd.DataFrame()
