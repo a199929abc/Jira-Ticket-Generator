@@ -59,7 +59,7 @@ As shown in figure 4, if you want to know each ticket status condition, you only
 
 
 ## QA Section : 
-1. Why the program show me the error _401-Unauthorized_?
+#### 1. Why the program show me the error _401-Unauthorized_?
 
 ![input](git_image/error_401.JPG)
 
@@ -67,5 +67,13 @@ As shown in figure 4, if you want to know each ticket status condition, you only
 This error means the connection between the ONC server and your computer is unauthorized because the default connection TOOKEN has expired. You need replace YOUR_TOKEN with your personal token obtained from the 'Web Services API'. Click https://wiki.oceannetworks.ca/display/O2A/API+Reference for more information. All Web Services require a token. This can be generated, after logging in at http://data.oceannetworks.ca/Profile. Click the "Web Services" tab, then click "Generate Token". Replace location in request.py 
 
 ![tooken](git_image/tooken.JPG)
+
+#### 2. Why I can't login ? 
+![login](image/login_fail.jpg)
+
+#### Answer :
+There might be two possible error lead to this problem, 1) your username and password are wrong, please double-check and enter again. 2) JIRA API hasn't generated a correct access TOKEN for you. Please go to https://jira.oceannetworks.ca/login.jsp login again and mark the remember me on this computer box. After that re-login using the application.
+
+
 
 
