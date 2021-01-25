@@ -111,7 +111,8 @@ def processExcel():
     df_whole.insert(11, "Component", "Test and Development")
     df_whole.insert(12, "Linked To", np.nan)
     df_whole.insert(13,"Work Ticket",np.nan)
-    df_whole = df_whole[:-1]
+    #df_whole = df_whole[:-1]
+    print(df_whole)
     #process dataframe row by row 
     for index, row in df_whole.iterrows():
         local_instrument_category=''

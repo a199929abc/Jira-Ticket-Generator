@@ -3,8 +3,8 @@
 block_cipher = None
 
 
-a = Analysis(['tes_JIRA_auto.py'],
-             pathex=['C:\\Users\\mtcelec2\\Desktop\\kaiheng\\tes_JIRA_auto'],
+a = Analysis(['tes_JIRA_auto.py','globalvar.py','request.py','request_jira.py'],
+             pathex=['C:\\Users\\mtcelec2\\Desktop\\kaiheng\\JIRA_auto'],
              binaries=[],
              datas=[],
              hiddenimports=[],
