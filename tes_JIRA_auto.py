@@ -1,3 +1,4 @@
+  
 """
 Author:Kaiheng Zhang
 Mail : kaiheng365@gmail.com
@@ -6,11 +7,10 @@ Version:VersionControl
 """
 
  
-
+import webbrowser   
 import time
 from openpyxl import Workbook
 from openpyxl import load_workbook
-import time
 import openpyxl
 import pandas as pd
 import numpy as np
@@ -51,12 +51,13 @@ mypath = ''
 workbookTitle = ''
 loginWindow = ''
 GUI_flag= False
-versionControl= '2.1.0'
+versionControl= '2.1.0 -Fix Duedate and Assignee cannot be null'
 df_whole= pd.DataFrame()
 # create a dataframe for storing the deploy row
 df_out = pd.DataFrame()
 # create a dictionary for storing the site ticket EN number
 site_dict = {}
+pd.options.mode.chained_assignment = None  # default='warn'
 
     
 def save_textvariable():
@@ -217,18 +218,25 @@ def update_status():
 if __name__=='__main__':
     log_inWindow = tk.Tk()
     log_inWindow.title('JIRA Login')
-    log_inWindow.geometry("390x135")
+    log_inWindow.geometry("430x300")
     log_inWindow['bg'] = "#0E69C1"
     
     tk.Label(log_inWindow, text = 'Username', font = 'bold', bg = "#0E69C1", fg = "white").grid(row = 0, column = 0, padx = 10, pady = 10)
     tk.Label(log_inWindow, text = 'Password', font = 'bold', bg = "#0E69C1", fg = "white").grid(row = 1, column = 0, padx = 10, pady = 10)
-
+    link =tk.Label(log_inWindow, text = 'http://142.104.193.65:8080/secure/admin/user/UserBrowser.jspa',font = 'Helvetica 8 italic', bg = "#0E69C1", fg = "white")
+    tk.Label(log_inWindow,text = '* Don’t know the assignee name? Click Link below：',font = 'Helvetica 10 bold', bg = "#0E69C1", fg = "white").place(x=8,y=140)
+    tk.Label(log_inWindow,text = '* Make sure you login the jira server first. Click link to check: ',font = 'Helvetica 10 bold ', bg = "#0E69C1", fg = "white").place(x=8,y=200)
+    link.place(x=11,y=160)
+    check_link=tk.Label(log_inWindow, text = 'https://jira.oceannetworks.ca/login.jsp ',font = 'Helvetica 8 italic', bg = "#0E69C1", fg = "white")
+    check_link.bind("<Button-1>", lambda event: webbrowser.open(check_link.cget("text")))
+    link.bind("<Button-1>", lambda event: webbrowser.open(link.cget("text")))
+    check_link.place(x=10, y=220)
     e1 = tk.Entry(log_inWindow, font = "bold", bg = "white", fg = "black", cursor = "heart", insertbackground = 'black')
     e2 = tk.Entry(log_inWindow, show = '*', font = "bold", bg = "white", fg = "black", cursor = "heart", insertbackground = 'black')
-
+    
     e1.grid(row = 0, column = 1)
     e2.grid(row = 1, column = 1)
-    tk.Button(log_inWindow, text = 'Login', font = "bold", command = save_textvariable, bd = 4, width = 8, bg = "#0E69C1", fg = "white", activeforeground = "gray").grid(row = 2, column = 2, padx = 10,)
+    tk.Button(log_inWindow, text = 'Login', font = "bold", command = save_textvariable, bd = 4, width = 8, bg = "#0E69C1", fg = "white", activeforeground = "gray").grid(row = 22, column = 2, padx = 15,)
     log_inWindow.mainloop()
     # InitWindow
     initWindow = tk.Tk()
@@ -239,7 +247,7 @@ if __name__=='__main__':
     labelframe1 = LabelFrame(initWindow, text="Choose Excel Workbook", bg = "#0E69C1", fg = "white")
     labelframe1.pack(fill= "both", expand="yes", padx = 10, pady = 10) 
     #transfer_variable
-    tk.Button(labelframe1, text = "Brose", command = openFile, font = 'bold', bd = 4, width = 10, bg = "white", fg = "black", activeforeground = "gray").place(x = 350, y = 25)
+    tk.Button(labelframe1, text = "Browse", command = openFile, font = 'bold', bd = 4, width = 10, bg = "white", fg = "black", activeforeground = "gray").place(x = 350, y = 25)
     tk.Button(labelframe1, text = "Enter", command = processExcel, font = 'bold', bd = 4, width = 10, bg = "white", fg = "black", activeforeground = "gray").place(x = 350, y = 100)
     tk.Button(labelframe1, text = "Update", command =update_status, font = 'bold', bd = 4, width = 10, bg = "white", fg = "black", activeforeground = "gray").place(x = 350, y = 175)
     tk.Label(labelframe1,text=" Version "+versionControl,font="Helvetica 10 italic",bg="#0E69C1",fg="white").place(x=10,y=230)

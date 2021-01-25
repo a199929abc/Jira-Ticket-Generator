@@ -8,13 +8,16 @@ def onc_request(row):
     local_instrument=''
     
     deviceId=int(row['DeviceID'])
+    
  
     url = 'https://data.oceannetworks.ca/api/devices'
     parameters = {'method':'get',
-                'token':'7e2e17dc-b6ea-4b2d-b58f-20cb9fa53e79', # replace YOUR_TOKEN_HERE with your personal token obtained from the 'Web Services API' tab at https://data.oceannetworks.ca/Profile when logged in.
+                'token':'f278291e-4a11-4574-b27b-fdfc4779d850', # replace YOUR_TOKEN_HERE with your personal token obtained from the 'Web Services API' tab at https://data.oceannetworks.ca/Profile when logged in.
                 'deviceId':deviceId}
     
     response = requests.get(url,params=parameters)
+    print('test')
+    print(response.status_code)
     
     if (response.ok):
         devices = json.loads(str(response.content,'utf-8')) # convert the json response to an object
@@ -32,7 +35,7 @@ def onc_request(row):
 
     url = 'https://data.oceannetworks.ca/api/deviceCategories'
     parameters = {'method':'get',
-                'token':'71f23a7a-8b7f-4b13-bd24-0948bc76eab0', # replace YOUR_TOKEN_HERE with your personal token obtained from the 'Web Services API' tab at https://data.oceannetworks.ca/Profile when logged in.
+                'token':'f278291e-4a11-4574-b27b-fdfc4779d850', # replace YOUR_TOKEN_HERE with your personal token obtained from the 'Web Services API' tab at https://data.oceannetworks.ca/Profile when logged in.
                 'deviceCategoryCode':local_instrument_category}
 
     response = requests.get(url,params=parameters)

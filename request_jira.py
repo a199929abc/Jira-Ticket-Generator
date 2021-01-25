@@ -54,13 +54,9 @@ def create_ticket(row,instrument_category,instrument,serial_number):
     )
     #print(type(__duedate))
     #print(type(__assignee))
-    print('333333333333333333333333333333333333333333333333')
     #create a ticket for current row
 
     if((isinstance(__assignee, str )==True) and (isinstance(__duedate, pd._libs.tslibs.nattype.NaTType)==True)):
-        print("This is 1")
-        print(__duedate)
-        print(__assignee)
         new_issue = jira.create_issue(
         project = {'key': 'EN'}, 
         summary ="{0}: {1}, SN: {2} (DI:{3})".format(__title,__instrument,__SerialNumber, int(__DeviceID)),
@@ -84,9 +80,7 @@ def create_ticket(row,instrument_category,instrument,serial_number):
 
     # due date NAT Assignee NaN
     elif((isinstance(__assignee, str )==False) and (isinstance(__duedate, pd._libs.tslibs.nattype.NaTType)==True)):
-        print("This is 2")
-        print(__duedate)
-        print(__assignee)
+
         new_issue = jira.create_issue(
         project = {'key': 'EN'}, 
         summary ="{0}: {1}, SN: {2} (DI:{3})".format(__title,__instrument,__SerialNumber, int(__DeviceID)),
@@ -109,9 +103,6 @@ def create_ticket(row,instrument_category,instrument,serial_number):
         return new_issue.key
 
     elif((isinstance(__assignee, str )==True) and (isinstance(__duedate, pd._libs.tslibs.nattype.NaTType)==False)):
-        print("This is 3")
-        print(__duedate)
-        print(__assignee)
         new_issue = jira.create_issue(
         project = {'key': 'EN'}, 
         summary ="{0}: {1}, SN: {2} (DI:{3})".format(__title,__instrument,__SerialNumber, int(__DeviceID)),
@@ -133,9 +124,7 @@ def create_ticket(row,instrument_category,instrument,serial_number):
         return new_issue.key
 
     else:
-        print("This is 4")
-        print(__duedate)
-        print(__assignee)
+
         new_issue = jira.create_issue(
         project = {'key': 'EN'}, 
         summary ="{0}: {1}, SN: {2} (DI:{3})".format(__title,__instrument,__SerialNumber, int(__DeviceID)),
