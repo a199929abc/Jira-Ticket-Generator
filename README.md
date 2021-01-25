@@ -69,7 +69,7 @@ This error means the connection between the ONC server and your computer is unau
 ![tooken](git_image/tooken.JPG)
 
 #### 2. Why I can't login ? 
-![login](image/login_fail.jpg)
+![login](git_image/login_fail.jpg)
 
 #### Answer :
 There might be two possible error lead to this problem, 1) your username and password are wrong, please double-check and enter again. 2) JIRA API hasn't generated a correct access TOKEN for you. Please go to https://jira.oceannetworks.ca/login.jsp login again and mark the remember me on this computer box. After that re-login using the application.
