@@ -64,7 +64,7 @@ As shown in figure 4, if you want to know each ticket status condition, you only
 ![input](git_image/error_401.JPG)
 
 #### Answer: 
-This error means the connection between the ONC server and your computer is unauthorized because the default connection TOOKEN has expired. You need replace YOUR_TOKEN with your personal token obtained from the 'Web Services API'. Click https://wiki.oceannetworks.ca/display/O2A/API+Reference for more information. All Web Services require a token. This can be generated, after logging in at http://data.oceannetworks.ca/Profile. **Click the "Web Services" tab, then click "Generate Token". Replace location in request.py **
+This error means the connection between the ONC server and your computer is unauthorized because the default connection TOOKEN has expired. You need replace YOUR_TOKEN with your personal token obtained from the 'Web Services API'. Click https://wiki.oceannetworks.ca/display/O2A/API+Reference for more information. All Web Services require a token. This can be generated, after logging in at http://data.oceannetworks.ca/Profile. **Click the "Web Services" tab, then click "Generate Token". Replace location in request.py**
 
 ![tooken](git_image/tooken.JPG)
 
