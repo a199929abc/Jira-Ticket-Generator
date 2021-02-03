@@ -7,6 +7,9 @@ def onc_request(row):
     local_instrument_category=''
     local_instrument=''
     
+    
+  
+    
     deviceId=int(row['DeviceID'])
     
  
