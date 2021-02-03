@@ -48,7 +48,7 @@ def create_ticket(row,instrument_category,instrument,serial_number):
     jira = JIRA(
         basic_auth = (username, password),
         options = {'server': 'http://142.104.193.65:8080'}
-        #options = {'server': 'https://jira.oceannetworks.ca/'}
+        
     )
     #print(type(__duedate))
     #print(type(__assignee))
@@ -152,7 +152,7 @@ def check_status(ticket):
     jira = JIRA(    
     basic_auth = (username, password),
     options = {'server': 'http://142.104.193.65:8080'}
-    #options = {'server': 'https://jira.oceannetworks.ca/'}
+  
                 )
     new_issue = jira.issue(ticket)
     return new_issue.fields.status.name
