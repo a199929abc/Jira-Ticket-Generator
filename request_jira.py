@@ -41,8 +41,6 @@ def create_ticket(row,instrument_category,instrument,serial_number):
     __title='Instrument Qualification '
         # Connect to jira
     # Authentication done by using username and password
-    #username = 'mtcelec2'
-    #password = '1q2w3e4R!'
     #global username,password
     #username,password=transfer_variable()
     username =gl.get_value('username')
@@ -147,9 +145,6 @@ def create_ticket(row,instrument_category,instrument,serial_number):
 
 
 def check_status(ticket):
-
-    #username = 'mtcelec2'
-    #password = '1q2w3e4R!'
     #global username,password
     #username,password=transfer_variable()
     username =gl.get_value('username')
