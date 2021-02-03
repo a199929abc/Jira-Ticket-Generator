@@ -72,7 +72,7 @@ def save_textvariable():
         jira = JIRA( 
             basic_auth = (username, password),
             options = {'server': 'http://142.104.193.65:8080'}
-            #options = {'server': 'https://jira.oceannetworks.ca/'}
+          
         )
         
         GUI_flag=True
